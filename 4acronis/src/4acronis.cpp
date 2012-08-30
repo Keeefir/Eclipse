@@ -7,25 +7,37 @@
 //============================================================================
 
 #include <iostream>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include "Filters/CFilter.h"
+#include <memory>
+
+using std::auto_ptr;
+using std::cout;
+using std::endl;
 
 using namespace std;
 
 int main() {
 
-	IplImage * source=cvLoadImage("meduza.jpg");
-	//IplImage * result=cvCreateImage(cvGetSize(source),source->depth,source->nChannels);
+	auto_ptr<CFilter<float> > F(new CAverage<float>(1,0));
 
+	int N=10;
+	float a[N],b[N];
 
-	cvShowImage("source",source);
+	for(int i=0;i<N;i++)
+	{
+		b[i]=a[i]=i;
+	}
+	for(int i=0;i<N;i++)
+	{
+		cout<<a[i]<<" ";
+	}cout<<"\n";
 
-	//cvShowImage("result",result);
+	F->filtering(a,b,10,10,1);
 
-	cvWaitKey();
-
-	cvReleaseImage(&source);
-	//cvReleaseImage(&result);
+	for(int i=0;i<N;i++)
+	{
+		cout<<b[i]<<" ";
+	}cout<<"\n";
 
 	return 0;
 }
