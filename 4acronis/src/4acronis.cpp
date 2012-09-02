@@ -7,37 +7,56 @@
 //============================================================================
 
 #include <iostream>
-#include "Filters/CFilter.h"
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include <memory>
 
-using std::auto_ptr;
-using std::cout;
-using std::endl;
+#include "Filters/CFilter.h"
+#include "Input/CInput.h"
+#include "Output/COutput.h"
+#include "Event/CEvent.h"
 
+#include "sys/time.h"
+#include "stdio.h"
 using namespace std;
 
-int main() {
+using std::cerr;
+using std::endl;
 
-	auto_ptr<CFilter<float> > F(new CAverage<float>(1,0));
+int main(int argc,char * argv[]) {
 
-	int N=10;
-	float a[N],b[N];
-
-	for(int i=0;i<N;i++)
+	if(argc!=2)
 	{
-		b[i]=a[i]=i;
+		cerr<<"Wrong args number"<<endl;
+		return -1;
 	}
-	for(int i=0;i<N;i++)
-	{
-		cout<<a[i]<<" ";
-	}cout<<"\n";
 
-	F->filtering(a,b,10,10,1);
+	std::auto_ptr<CFilter<unsigned char> > Filter (FilterFabric<unsigned char,double>(argv[1]));
+	std::auto_ptr<CInput> Camera (new CCapture);
+	std::auto_ptr<COutput> Show (new COutput);
+	std::auto_ptr<CEvent> Event (new CCVEvent);
 
-	for(int i=0;i<N;i++)
+	int Width,Height;
+
+	Camera->GetSize(Width,Height);
+	unsigned char * source=new unsigned char[Width*Height];
+	unsigned char * result=new unsigned char[Width*Height];
+try
+{
+	while((*Event)())
 	{
-		cout<<b[i]<<" ";
-	}cout<<"\n";
+		(*Camera)(source);
+		(*Filter)(source,result,Width,Width,Height,1);
+		(*Show)(result,Width,Height);
+	}
+}
+catch(...)
+{
+	delete [] source;
+	delete [] result;
+}
+	delete [] source;
+	delete [] result;
 
 	return 0;
 }
