@@ -16,7 +16,7 @@ using namespace std;
 typedef GameField<3,3> Game15;
 
 ///some change
-
+///one more change
 
 class EvristicNotOwnPlace{
 	Game15 Solve;
