@@ -1,0 +1,4 @@
+Ru comment about hex system 
+в восьмеричной системе 
+Ru comment about dec system 
+в десятичной системе 
